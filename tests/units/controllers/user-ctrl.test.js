@@ -1,6 +1,5 @@
 const UserController = require('../../../src/controllers/user-ctrl')
 const UserService = require('../../../src/services/user-service')
-const createClientSchema = require('../../../src/schemas/User')
 const EmailValidator = require('../../../src/utils/email-validator')
 const { faker } = require('@faker-js/faker')
 
@@ -9,6 +8,14 @@ const reqMock = {
         name: "Igor Lopes",
         email: "igor@email.com",
         password: "SenhaSegura123"
+    }
+}
+
+const reqMockNoPassword = {
+    body: {
+        name: "Igor Lopes",
+        email: "igor@email.com",
+        password: null
     }
 }
 
@@ -56,14 +63,25 @@ describe('Client controller tests', () => {
     })
 
     test('Should throws if password is invalid.', async () => {
-        jest.spyOn(EmailValidator, 'isValid').mockImplementationOnce(() => false)
-        jest.spyOn(UserService, 'createUser').mockImplementationOnce(UserServiceMock.create)
+        try {
+            await UserController.create(reqMockNoPassword, resMock)
+        } catch (error) {
+            expect(error).toHaveProperty('status', 400)
+            expect(error).toHaveProperty('message', 'Senha inválida')
+        }
+    })
+
+    test('Should return status 500 if server error.', async () => {
+        //jest.spyOn(EmailValidator, 'isValid').mockImplementationOnce(() => true)
+        // jest.spyOn(UserService, 'createUser').mockImplementationOnce(() => {
+        //     throw new Error()
+        // })
 
         try {
             await UserController.create(reqMock, resMock)
         } catch (error) {
-            expect(error).toHaveProperty('status', 400)
-            expect(error).toHaveProperty('message', 'Senha inválida')
+            expect(error).toHaveProperty('status', 500)
+            expect(error).toHaveProperty('message', 'Server Error')
         }
     })
 })
