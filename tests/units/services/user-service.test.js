@@ -3,7 +3,7 @@ const UserService = require('../../../src/services/user-service')
 const User = require('../../../src/schemas/User')
 
 const UserMock = {
-    findOne: async () => null, // Essa função do Mongoose retorna null quando não encontra o que foi pesquisado.
+    findOne: async () => null, // A função do Mongoose, "findOne", retorna null quando não encontra o que foi pesquisado.
     create: async () => ({ id: faker.database.mongodbObjectId()}),
     userCredentials: async () => ({
         name: faker.person.fullName(),
